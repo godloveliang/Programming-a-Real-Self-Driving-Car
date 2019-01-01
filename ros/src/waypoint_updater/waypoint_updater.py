@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import rospy
+import numpy as np
 from geometry_msgs.msg import PoseStamped
 from styx_msgs.msg import Lane, Waypoint
 from scipy.spatial import KDTree
@@ -46,8 +47,8 @@ class WaypointUpdater(object):
 
         self.loop()
 
-    def loop():
-	rate = rospy.Rata(50)
+    def loop(self):
+	rate = rospy.Rate(50)
 	while not rospy.is_shutdown():
 	    if self.pose and self.base_waypoints:
 		closest_waypoint_idx = self.get_closest_waypoint_idx()
