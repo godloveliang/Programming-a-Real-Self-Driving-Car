@@ -65,7 +65,6 @@ class WaypointUpdater(object):
         # check if closest is ahead or behind car
         closest_waypoint = self.waypoints_2d[closest_idx]
         pre_closest_waypoint = self.waypoints_2d[closest_idx-1]
-        rospy.loginfo('closes to %s , %s is : %s', x, y, closest_waypoint)
         
         cl_vect = np.array(closest_waypoint)
         pre_vect = np.array(pre_closest_waypoint)
