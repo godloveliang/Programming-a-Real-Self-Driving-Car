@@ -47,7 +47,7 @@ git clone https://github.com/godloveliang/Programming-a-Real-Self-Driving-Car
 
 2. Install python dependencies
 ```bash
-cd CarND-Capstone
+cd Programming-a-Real-Self-Driving-Car
 pip install -r requirements.txt
 ```
 3. Make and run styx
@@ -71,7 +71,7 @@ rosbag play -l traffic_light_bag_file/traffic_light_training.bag
 ```
 4. Launch your project in site mode
 ```bash
-cd CarND-Capstone/ros
+cd Programming-a-Real-Self-Driving-Car/ros
 roslaunch launch/site.launch
 ```
 5. Confirm that traffic light detection works on real life images
