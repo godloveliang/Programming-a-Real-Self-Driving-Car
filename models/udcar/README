@@ -1,6 +1,6 @@
 This folder has files pertaining to Traffic light detection for Udacity car images. 
 
-The following 2 files are Keras models created using Udacity car rosbag images with no additional enhancements. 
+The following 2 files are for creation and sample prediction for Keras model tl_keras_carAv07.h5 created using Udacity car rosbag images with no additional enhancements. 
 - TrafficLightCarAv07.html
 - TrafficLightCarAv07-Prediction.html
 
