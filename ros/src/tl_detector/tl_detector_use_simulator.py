@@ -71,7 +71,7 @@ class TLDetector(object):
 	#get the state of closest light, if it's red light, get it's index in base_waypoint and publish, if not red light publish -1.
 	redlight_state = self.red_light[closest_light_idx]
 
-	if redlight_state == 1:
+	if redlight_state == 1 and self.waypoint_tree:
 	    closest_red_light_idx =self.get_closest_waypoint_idx(closest_light_idx)
 	    self.upcoming_red_light_pub.publish(Int32(closest_red_light_idx))
 	
