@@ -22,16 +22,17 @@ class Controller(object):
         self.decel_limit = decel_limit
         
         #create throttle PID object
-        kp = 0.3
-        kd = 0.05
-        ki = 0.1
+        kp = 0.4
+        kd = 0.0
+        ki = 0.05
         min = 0
-        max = accel_limit
+        max = 0.3
         self.throttle_PID = PID(kp, ki, kd, min, max)
         
         #create velocity low pass object
-        tau = 0.5
+        tau = 0.1
         self.vel_lpf = LowPassFilter(tau, self.ts)
+        self.error_lpf = LowPassFilter(tau, self.ts)
         
         #create yaw controller object
         self.yaw_controller = YawController(wheel_base, steer_ratio, min_speed, max_lat_accel, max_steer_angle)
@@ -43,25 +44,24 @@ class Controller(object):
             self.throttle_PID.reset()
             return 0., 0., 0.
         
-        #default
-        throttle = 0
-        brake = 0
-        steering = 0
-        
+               
         filtered_velocity = self.vel_lpf.filt(current_vel)
-        linear_vel_error = linear_vel_cmd - current_vel
-        if linear_vel_error > 0.1:
-            throttle = min(self.accel_limit, self.throttle_PID.step(linear_vel_error, self.ts))
-            brake = 0
-        elif linear_vel_cmd == 0:
+        linear_vel_error = linear_vel_cmd - filtered_velocity
+        
+        steering = self.yaw_controller.get_steering(linear_vel_cmd, angular_vel_cmd, filtered_velocity)
+        throttle = self.throttle_PID.step(linear_vel_error, self.ts)
+        brake = 0
+        
+        if linear_vel_cmd == 0 and linear_vel_error < 0.05:
             throttle = 0
             brake = 700
-        elif linear_vel_error < 0:
+        elif linear_vel_error < 0.0:
             throttle = 0
-            decel = max(linear_vel_error, self.decel_limit)
-            brake = abs(decel) * self.vehicle_mass * self.wheel_radius
-            
-        steering = self.yaw_controller.get_steering(linear_vel_cmd, angular_vel_cmd, current_vel)
+            decel = max(3*linear_vel_error, self.decel_limit)
+            brake = abs(decel) * self.vehicle_mass * self.wheel_radius   
+        elif throttle < 0.05:
+            throttle = 0
+            brake = 0
         
         return throttle, brake, steering
             
