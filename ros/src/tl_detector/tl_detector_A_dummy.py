@@ -192,7 +192,7 @@ class TLDetector(object):
         SR: Find the closest waypoint to the car. Loop through the traffic lights, find the waypoint near the closest light.
         Return the index and the color of the traffic light.
         """
-        if(self.pose):
+        if self.pose and self.waypoint_tree:
             car_wp_idx = self.get_closest_waypoint(self.pose.pose)
 
             #TODO find the closest visible traffic light (if one exists)
