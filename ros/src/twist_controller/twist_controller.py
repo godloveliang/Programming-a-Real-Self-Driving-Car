@@ -22,9 +22,9 @@ class Controller(object):
         self.decel_limit = decel_limit
         
         #create throttle PID object
-        kp = 0.35
+        kp = 0.3
         kd = 0.1
-        ki = 0.05
+        ki = 0.1
         min = 0
         max = 0.3
         self.throttle_PID = PID(kp, ki, kd, min, max)

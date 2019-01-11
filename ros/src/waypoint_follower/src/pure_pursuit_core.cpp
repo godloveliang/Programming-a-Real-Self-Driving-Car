@@ -82,14 +82,17 @@ void PurePursuit::calcLookaheadDistance(int waypoint)
   return ;
 }
 
-double PurePursuit::calcCurvature(geometry_msgs::Point target) const
+double PurePursuit::calcCurvature(geometry_msgs::Point target, int rate) const
 {
   double kappa;
   double denominator = pow(getPlaneDistance(target, current_pose_.pose.position), 2);
   double numerator = 2 * calcRelativeCoordinate(target, current_pose_.pose).y;
+  double static prev_lateral_error = numerator;
 
   if (denominator != 0)
-    kappa = numerator / denominator;
+  {
+    kappa = (numerator + 0.1 * rate * (numerator - prev_lateral_error)) / denominator;       
+  }   
   else
   {
     if(numerator > 0)
@@ -97,6 +100,8 @@ double PurePursuit::calcCurvature(geometry_msgs::Point target) const
     else
       kappa = -KAPPA_MIN_;
   }
+ 
+  prev_lateral_error = numerator;  
   ROS_INFO_STREAM("kappa :" << kappa);
   return kappa;
 }
@@ -266,7 +271,7 @@ geometry_msgs::Twist PurePursuit::calcTwist(double curvature, double cmd_velocit
   {
     twist.angular.z = prev_angular_velocity;
   }
-
+    
   prev_angular_velocity = twist.angular.z;
   return twist;
 }
@@ -345,7 +350,7 @@ geometry_msgs::TwistStamped PurePursuit::outputTwist(geometry_msgs::Twist t) con
   return twist;
 }
 
-geometry_msgs::TwistStamped PurePursuit::go()
+geometry_msgs::TwistStamped PurePursuit::go(int rate)
 {
   if(!pose_set_ || !waypoint_set_ || !velocity_set_){
     if(!pose_set_) {
@@ -377,7 +382,7 @@ geometry_msgs::TwistStamped PurePursuit::go()
       num_of_next_waypoint_ == (static_cast<int>(current_waypoints_.getSize() - 1)))
   {
     position_of_next_target_ = current_waypoints_.getWaypointPosition(num_of_next_waypoint_);
-    return outputTwist(calcTwist(calcCurvature(position_of_next_target_), getCmdVelocity(0)));
+    return outputTwist(calcTwist(calcCurvature(position_of_next_target_, rate), getCmdVelocity(0)));
   }
 
   // linear interpolation and calculate angular velocity
@@ -391,7 +396,7 @@ geometry_msgs::TwistStamped PurePursuit::go()
 
   // ROS_INFO("next_target : ( %lf , %lf , %lf)", next_target.x, next_target.y,next_target.z);
 
-  return outputTwist(calcTwist(calcCurvature(position_of_next_target_), getCmdVelocity(0)));
+  return outputTwist(calcTwist(calcCurvature(position_of_next_target_, rate), getCmdVelocity(0)));
 
 // ROS_INFO("linear : %lf, angular : %lf",twist.twist.linear.x,twist.twist.angular.z);
 

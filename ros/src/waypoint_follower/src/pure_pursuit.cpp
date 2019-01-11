@@ -67,7 +67,7 @@ int main(int argc, char **argv)
   while (ros::ok())
   {
     ros::spinOnce();
-    cmd_velocity_publisher.publish(pp.go());
+    cmd_velocity_publisher.publish(pp.go(LOOP_RATE));
     loop_rate.sleep();
   }
 

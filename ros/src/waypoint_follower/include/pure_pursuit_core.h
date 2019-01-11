@@ -79,7 +79,7 @@ private:
 
   double getCmdVelocity(int waypoint) const;
   void calcLookaheadDistance(int waypoint);
-  double calcCurvature(geometry_msgs::Point target) const;
+  double calcCurvature(geometry_msgs::Point target, int rate) const;
   double calcRadius(geometry_msgs::Point target) const;
   bool interpolateNextTarget(int next_waypoint, geometry_msgs::Point *next_target) const;
   bool verifyFollowing() const;
@@ -99,7 +99,7 @@ public:
     , lookahead_distance_calc_ratio_(2.0)
     , minimum_lookahead_distance_(6.0)
     , displacement_threshold_(0.1) // 0.2
-    , relative_angle_threshold_(2.) //5.
+    , relative_angle_threshold_(1.) //5.
     , waypoint_set_(false)
     , pose_set_(false)
     , velocity_set_(false)
@@ -135,7 +135,7 @@ public:
     return lookahead_distance_;
   }
   // processing for ROS
-  geometry_msgs::TwistStamped go();
+  geometry_msgs::TwistStamped go(int rate);
 };
 }
 
