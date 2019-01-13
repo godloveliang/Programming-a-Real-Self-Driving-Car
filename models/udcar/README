@@ -8,3 +8,12 @@ with no additional image enhancements.
 The following file peforms tests on the above A07 model -  evaluates accuracy of the model on 100 images if flipped or with altered 
 brightness.
 - udcar_A07_test.py
+
+The following file trains a network given image data. 
+- udcar_B01_train.py
+
+The following file can be used to test the data. 
+- udcar_B01_test.py
+
+The link to the trained Keras model that can handle translational variance and brightness variance is provided below (large file ). 
+https://drive.google.com/open?id=13-5csU-YvS2N27GgI4tbAOF2fMHjMxvA
