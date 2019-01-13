@@ -1,5 +1,6 @@
 This folder has files pertaining to Traffic light detection for Udacity car images. 
 
+Model A: Train a classifier on provided rosbag image data - with no image augmentation for brightness / flipping etc.
 The following 2 files are for creation and sample prediction for Keras model tl_keras_carAv07.h5 created using Udacity car rosbag images 
 with no additional image enhancements. 
 - TrafficLightCarAv07.html
@@ -9,6 +10,7 @@ The following file peforms tests on the above A07 model -  evaluates accuracy of
 brightness.
 - udcar_A07_test.py
 
+Model B: Train a more robust classifier that can handle translational variance and brightness variance. 
 The following file trains a network given image data. 
 - udcar_B01_train.py
 
