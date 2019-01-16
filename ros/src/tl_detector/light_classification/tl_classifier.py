@@ -82,12 +82,10 @@ class TLClassifier(object):
         self.is_context_real_car = boIsContextRealCar
         self.is_debug_mode = boDebugMode
         
-        
         #TODO load classifier
         if (self.is_context_real_car==False):
-            ##GraphFilePath_SSD = 'light_classification/model_udsim/ssd_inception_v2_inference_graph.pb'
-            ##GraphFilePath_SSD = "models/ssd_sim/frozen_inference_graph.pb"
-            GraphFilePath_SSD = "models/frozen_ssd_sim_20190113/frozen_inference_graph.pb"
+            GraphFilePath_SSD = 'light_classification/model_udsim/ssd_inception_v2_inference_graph.pb'
+            ##GraphFilePath_SSD = "models/frozen_ssd_sim_20190114_10K_Steps/frozen_inference_graph.pb"
             self.detection_graph = load_graph(GraphFilePath_SSD)
 
             # The input placeholder for the image.
@@ -194,6 +192,7 @@ class TLClassifier(object):
         
 #===================================================================================
 if __name__ == '__main__':
+
     light_classifier = TLClassifier(boIsContextRealCar  = False, 
                                     boDebugMode         = True, 
                                     ConfidenceThreshold = 0.5)

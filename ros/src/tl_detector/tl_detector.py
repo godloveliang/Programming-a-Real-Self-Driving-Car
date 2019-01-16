@@ -50,7 +50,7 @@ class TLDetector(object):
 
         self.bridge = CvBridge()
         self.light_classifier = TLClassifier( boIsContextRealCar    = self.is_site, 
-                                              boDebugMode           = false, 
+                                              boDebugMode           = False, 
                                               ConfidenceThreshold   = self.confidence_threshold)
         
         self.listener = tf.TransformListener()
