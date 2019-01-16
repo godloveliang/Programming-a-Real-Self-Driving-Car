@@ -6,15 +6,12 @@ from styx_msgs.msg import TrafficLightArray, TrafficLight
 from styx_msgs.msg import Lane
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
-from light_classification.tl_classifier import TLClassifier
+from light_classification.tl_classifier_udcar import TLClassifier
 import tf
 import cv2
 import yaml
-
 from scipy.spatial import KDTree
-import math
-import numpy as np
-
+        
 STATE_COUNT_THRESHOLD = 3
 
 class TLDetector(object):
@@ -44,15 +41,11 @@ class TLDetector(object):
 
         config_string = rospy.get_param("/traffic_light_config")
         self.config = yaml.load(config_string)
-        self.is_site = self.config["is_site"]
-        self.confidence_threshold = self.config["confidence_threshold"]
-        self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
-
-        self.bridge = CvBridge()
-        self.light_classifier = TLClassifier( boIsContextRealCar    = self.is_site, 
-                                              boDebugMode           = false, 
-                                              ConfidenceThreshold   = self.confidence_threshold)
         
+        self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
+        
+        self.bridge = CvBridge()
+        self.light_classifier = TLClassifier()
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
@@ -69,6 +62,7 @@ class TLDetector(object):
         """
         SR: I have directly copy-pasted Chen Liang's code from Github - waypoint_updater.py. Please double check.
         """
+        
         self.waypoints = waypoints
         if not self.waypoints_2d:
             self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in
@@ -112,6 +106,7 @@ class TLDetector(object):
         ****
         Finally, in all cases, increment the counter by one.
         '''
+        
         if self.state != state:
             self.state_count = 0
             self.state = state
@@ -156,8 +151,8 @@ class TLDetector(object):
             closest_idx = (closest_idx + 1) % len(self.waypoints_2d)
         
         return closest_idx
-
-
+        
+        
     def get_light_state(self, light):
         """Determines the current color of the traffic light
 
@@ -213,10 +208,9 @@ class TLDetector(object):
                     line_wp_idx = temp_wp_idx
         if (closest_light):
             state = self.get_light_state(closest_light) # Commmented for the test detector
-            ##state = light.state
+            #state = light.state
             return line_wp_idx, state
-        
-        ### ??? self.waypoints = None
+
         return -1, TrafficLight.UNKNOWN
 
 if __name__ == '__main__':
