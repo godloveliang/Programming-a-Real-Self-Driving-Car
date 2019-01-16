@@ -10,6 +10,7 @@ from light_classification.tl_classifier_udcar import TLClassifier
 import tf
 import cv2
 import yaml
+from scipy.spatial import KDTree
 
 STATE_COUNT_THRESHOLD = 3
 
