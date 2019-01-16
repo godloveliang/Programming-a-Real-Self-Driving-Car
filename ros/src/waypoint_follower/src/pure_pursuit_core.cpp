@@ -91,7 +91,7 @@ double PurePursuit::calcCurvature(geometry_msgs::Point target, int rate) const
 
   if (denominator != 0)
   {
-    kappa = (numerator + 0.1 * rate * (numerator - prev_lateral_error)) / denominator;       
+    kappa = (numerator + 0.2 * rate * (numerator - prev_lateral_error)) / denominator;       
   }   
   else
   {
