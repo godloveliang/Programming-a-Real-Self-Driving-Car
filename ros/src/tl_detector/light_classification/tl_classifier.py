@@ -185,7 +185,7 @@ class TLClassifier(object):
                 print('No Traffic Light')
                 if __name__ != '__main__': detected_colour = TrafficLight.UNKNOWN
         else:
-            print('Unknown Traffic Colour')
+            print('No Traffic Light')
             if __name__ != '__main__': detected_colour = TrafficLight.UNKNOWN
         
         return detected_colour
