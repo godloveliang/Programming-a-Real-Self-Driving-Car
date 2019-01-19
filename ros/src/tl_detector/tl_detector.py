@@ -16,7 +16,7 @@ from scipy.spatial import KDTree
 import math
 import numpy as np
 
-STATE_COUNT_THRESHOLD = 3
+STATE_COUNT_THRESHOLD = 2
 
 #===================================================================================
 class TLDetector(object):
@@ -32,7 +32,10 @@ class TLDetector(object):
         self.base_waypoints = None
         self.waypoints_2d = None
         self.waypoint_tree = None
-
+        self.imgcount = 0
+        self.red_light_state_count = 0
+        self.green_light_state_count = 0
+        
         sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
 
@@ -68,7 +71,79 @@ class TLDetector(object):
         self.last_wp = -1
         self.state_count = 0
 
-        rospy.spin()
+        ##rospy.spin()
+        self.handle_ros_spin()
+    #--------------------------------------------------------------------------
+    def handle_ros_spin(self):
+        '''
+        Publish upcoming red lights at camera frequency.
+        Each predicted state has to occur `STATE_COUNT_THRESHOLD` number
+        of times till we start using it. Otherwise the previous stable state is
+        used.
+        '''
+        '''
+        SR:
+        *if*
+        If observed state != state , set state to observed state and start the counter. The different state may be an exception
+        and we have to make sure. 
+        *elif*
+        If the same state is seen more than thrice, we are sure the light has changed. Update last_state to state, update
+        light_wp only if the light is red.
+        (light_wp is the waypoint next to traffic light stop). Otherwise, set light_wp to -1. 
+        Publish the waypoint and also set it to last_wp that has the previous known traffic light waypoint
+        *else*
+        This means that the observed state is same as the state but it hasn't been observed thrice. In this case, continue
+        publishing the previous traffic light waypoint. 
+        ****
+        Finally, in all cases, increment the counter by one.
+        '''
+        rate = rospy.Rate(3)
+        while not rospy.is_shutdown():
+            if self.pose is not None and self.waypoints is not None and self.camera_image is not None:
+                light_wp, state = self.process_traffic_lights()
+                
+                #if self.state != state:
+                #    self.state_count = 0
+                #    self.state = state
+                #elif self.state_count >= STATE_COUNT_THRESHOLD:
+                #    self.last_state = self.state
+                #    light_wp = light_wp if state == TrafficLight.RED else -1
+                #    self.last_wp = light_wp
+                #    self.upcoming_red_light_pub.publish(Int32(light_wp))
+                #else:
+                #    self.upcoming_red_light_pub.publish(Int32(self.last_wp))
+                #self.state_count += 1
+                #print ("state_count:{0} | state:{1} | last_state: {2}".format(self.state_count, state, self.last_state) )
+               
+                if(state == TrafficLight.GREEN):
+                    self.green_light_state_count +=1;
+                else:
+                    self.green_light_state_count = 0
+                    
+                if(state == TrafficLight.RED):
+                    if(self.red_light_state_count < STATE_COUNT_THRESHOLD*2):
+                        self.red_light_state_count += 1
+
+                elif (self.red_light_state_count > 0) and (state != TrafficLight.RED):
+                    self.red_light_state_count -= 1
+                    if(self.green_light_state_count >= STATE_COUNT_THRESHOLD):
+                        self.red_light_state_count = 0
+                
+                if(self.red_light_state_count >= STATE_COUNT_THRESHOLD):
+                    self.last_wp = light_wp
+                    self.upcoming_red_light_pub.publish(Int32(self.last_wp))
+                else:
+                    self.last_wp = -1
+                    if(self.red_light_state_count == 0):
+                        self.upcoming_red_light_pub.publish(Int32(self.last_wp))
+
+                self.has_image = False
+                self.camera_image = None
+                
+                print ("red_state_count:{0} | green_state_count:{1} | WP: {2}".\
+                        format(self.red_light_state_count, self.green_light_state_count, self.last_wp) )
+        rate(sleep)
+        
     #--------------------------------------------------------------------------
     def pose_cb(self, msg):
         self.pose = msg
@@ -98,43 +173,15 @@ class TLDetector(object):
             msg (Image): image from car-mounted camera
 
         """
+        ##self.imgcount = (self.imgcount+1)%3
+        
+        ##if(self.imgcount != 0) :
+        ##    return
+        
         self.has_image = True
         self.camera_image = msg
-        light_wp, state = self.process_traffic_lights()
+        #light_wp, state = self.process_traffic_lights()
 
-        '''
-        Publish upcoming red lights at camera frequency.
-        Each predicted state has to occur `STATE_COUNT_THRESHOLD` number
-        of times till we start using it. Otherwise the previous stable state is
-        used.
-        '''
-        '''
-        SR:
-        *if*
-        If observed state != state , set state to observed state and start the counter. The different state may be an exception
-        and we have to make sure. 
-        *elif*
-        If the same state is seen more than thrice, we are sure the light has changed. Update last_state to state, update
-        light_wp only if the light is red.
-        (light_wp is the waypoint next to traffic light stop). Otherwise, set light_wp to -1. 
-        Publish the waypoint and also set it to last_wp that has the previous known traffic light waypoint
-        *else*
-        This means that the observed state is same as the state but it hasn't been observed thrice. In this case, continue
-        publishing the previous traffic light waypoint. 
-        ****
-        Finally, in all cases, increment the counter by one.
-        '''
-        if self.state != state:
-            self.state_count = 0
-            self.state = state
-        elif self.state_count >= STATE_COUNT_THRESHOLD:
-            self.last_state = self.state
-            light_wp = light_wp if state == TrafficLight.RED else -1
-            self.last_wp = light_wp
-            self.upcoming_red_light_pub.publish(Int32(light_wp))
-        else:
-            self.upcoming_red_light_pub.publish(Int32(self.last_wp))
-        self.state_count += 1
 
     #--------------------------------------------------------------------------
     def get_closest_waypoint(self, position_x, position_y):

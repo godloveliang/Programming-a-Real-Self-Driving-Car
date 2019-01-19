@@ -85,7 +85,8 @@ class TLClassifier(object):
         #TODO load classifier
         if (self.is_context_real_car==False):
             GraphFilePath_SSD = 'light_classification/model_udsim/ssd_inception_v2_inference_graph.pb'
-            ##GraphFilePath_SSD = "models/frozen_ssd_sim_20190114_10K_Steps/frozen_inference_graph.pb"
+            ##GraphFilePath_SSD = "models/frozen_ssd_sim_20190114_10K_Steps/frozen_inference_graph.pb"'
+            ##GraphFilePath_SSD = 'light_classification/model_udsim/frozen_inference_graph.pb'
             self.detection_graph = load_graph(GraphFilePath_SSD)
 
             # The input placeholder for the image.
