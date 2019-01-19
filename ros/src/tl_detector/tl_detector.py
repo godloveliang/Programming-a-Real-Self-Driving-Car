@@ -33,6 +33,8 @@ class TLDetector(object):
         self.waypoints_2d = None
         self.waypoint_tree = None
         self.imgcount = 0
+        self.red_light_state_count = 0
+        self.green_light_state_count = 0
         
         sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
@@ -99,20 +101,47 @@ class TLDetector(object):
         while not rospy.is_shutdown():
             if self.pose is not None and self.waypoints is not None and self.camera_image is not None:
                 light_wp, state = self.process_traffic_lights()
-                if self.state != state:
-                    self.state_count = 0
-                    self.state = state
-                elif self.state_count >= STATE_COUNT_THRESHOLD:
-                    self.last_state = self.state
-                    light_wp = light_wp if state == TrafficLight.RED else -1
-                    self.last_wp = light_wp
-                    self.upcoming_red_light_pub.publish(Int32(light_wp))
+                
+                #if self.state != state:
+                #    self.state_count = 0
+                #    self.state = state
+                #elif self.state_count >= STATE_COUNT_THRESHOLD:
+                #    self.last_state = self.state
+                #    light_wp = light_wp if state == TrafficLight.RED else -1
+                #    self.last_wp = light_wp
+                #    self.upcoming_red_light_pub.publish(Int32(light_wp))
+                #else:
+                #    self.upcoming_red_light_pub.publish(Int32(self.last_wp))
+                #self.state_count += 1
+                #print ("state_count:{0} | state:{1} | last_state: {2}".format(self.state_count, state, self.last_state) )
+               
+                if(state == TrafficLight.GREEN):
+                    self.green_light_state_count +=1;
                 else:
+                    self.green_light_state_count = 0
+                    
+                if(state == TrafficLight.RED):
+                    if(self.red_light_state_count < STATE_COUNT_THRESHOLD*2):
+                        self.red_light_state_count += 1
+
+                elif (self.red_light_state_count > 0) and (state != TrafficLight.RED):
+                    self.red_light_state_count -= 1
+                    if(self.green_light_state_count >= STATE_COUNT_THRESHOLD):
+                        self.red_light_state_count = 0
+                
+                if(self.red_light_state_count >= STATE_COUNT_THRESHOLD):
+                    self.last_wp = light_wp
                     self.upcoming_red_light_pub.publish(Int32(self.last_wp))
+                else:
+                    self.last_wp = -1
+                    if(self.red_light_state_count == 0):
+                        self.upcoming_red_light_pub.publish(Int32(self.last_wp))
+
                 self.has_image = False
                 self.camera_image = None
-                self.state_count += 1
-                print ("state_count:{0} | state:{1} | last_state: {2}".format(self.state_count, state, self.last_state) )
+                
+                print ("red_state_count:{0} | green_state_count:{1} | WP: {2}".\
+                        format(self.red_light_state_count, self.green_light_state_count, self.last_wp) )
         rate(sleep)
         
     #--------------------------------------------------------------------------
