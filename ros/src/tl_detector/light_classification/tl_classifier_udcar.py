@@ -7,9 +7,9 @@ class TLClassifier(object):
     def __init__(self):
         #TODO load classifier
 	   # Assumes that the keras file is in the same folder
-        self.model = load_model('tl_keras_carBv03.h5')
+        model_path = "light_classification/model_udcar/tl_keras_carbv03.h5"
+        self.model = load_model(model_path)
         
-
     def get_classification(self, image):
         """Determines the color of the traffic light in the image
 
@@ -23,6 +23,8 @@ class TLClassifier(object):
         #TODO implement light color prediction
         imgdisp = image[:,:,::-1] # Convert to RGB
         imgpred = imgdisp.reshape((1,imgdisp.shape[0], imgdisp.shape[1], imgdisp.shape[2]))
-        classpred = model.predict_classes(imgpred)
-        output = TrafficLight.Red if classpred[0]==0 else TrafficLight.UNKNOWN
+        classpred = self.model.predict_classes(imgpred)
+        output = TrafficLight.RED if classpred[0]==0 else TrafficLight.UNKNOWN
+        #print("Predicted class", classpred[0])
+        #print("Output", output)
         return output
