@@ -2,7 +2,7 @@
 
 ### Team HappyLearning
 * Zhanglin Wu (Team Lead),	jason.lin.wu@163.com,	UTC+8(Chengdu, China)
-* Chen Liang,	godloveliang@gmail.com,	UTC+8(Shanghai, China)
+* Chen Liang,	godloveliang@163.com,	UTC+8(Shanghai, China)
 * Andrew Hong,	hongv0129@gmail.com,	UTC+8(Singapore)
 * Abdulla Ayyad,	abdulla.ayyad96@gmail.com,	UTC+9(Japan)
 * Siddharth Ravi,	siddharth.ravi@yahoo.com,	UTC+5.5
