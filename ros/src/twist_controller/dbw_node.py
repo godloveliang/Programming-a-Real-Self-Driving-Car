@@ -48,7 +48,7 @@ class DBWNode(object):
         min_speed = 0.1
         
         self.process_rate = 5
-        self.send_rate = 10 #must be a multiple of the processing rate, change to 50 for carla
+        self.send_rate = 50 # must be a multiple of the processing rate, change to 10 for the simulator
         self.process_itr = 0
         
         self.steer_pub = rospy.Publisher('/vehicle/steering_cmd',
