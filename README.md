@@ -7,10 +7,20 @@
 * Abdulla Ayyad,	@abdullaayyad96,	UTC+9(Japan)
 * Siddharth Ravi,	@siddharth-ravi,	UTC+5.5
 
+### Final Project Video
+##### on simulator
+<img src="imgs/sdcnd.gif" width="1200"  />
+##### on real car Carla
+<img src="imgs/sdcnd_site.gif" width="1200"  />
+
 ### Overview
 This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
 
-Please use **one** of the two installation options, either native **or** docker installation.
+For this project, ROS nodes will be writing to implement core functionality of the autonomous vehicle system, including traffic light detection, control, and waypoint following! 
+The following is a system architecture diagram showing the ROS nodes and topics used in the project. 
+
+<img src="imgs/project_overview.png" width="1300"  />
+
 
 ### Native Installation
 
@@ -26,6 +36,7 @@ Please use **one** of the two installation options, either native **or** docker 
   * [ROS Kinetic](http://wiki.ros.org/kinetic/Installation/Ubuntu) if you have Ubuntu 16.04.
   * [ROS Indigo](http://wiki.ros.org/indigo/Installation/Ubuntu) if you have Ubuntu 14.04.
 * [Dataspeed DBW](https://bitbucket.org/DataspeedInc/dbw_mkz_ros)
+  
   * Use this option to install the SDK on a workstation that already has ROS installed: [One Line SDK Install (binary)](https://bitbucket.org/DataspeedInc/dbw_mkz_ros/src/81e63fcc335d7b64139d7482017d6a97b405e250/ROS_SETUP.md?fileviewer=file-view-default)
 * Download the [Udacity Simulator](https://github.com/udacity/CarND-Capstone/releases).
 
